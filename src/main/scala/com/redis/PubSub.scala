@@ -110,4 +110,9 @@ trait PubOperations { self: Redis =>
   def publish(channel: String, msg: String): Option[Long] = {
     send("PUBLISH", List(channel, msg))(asLong)
   }
+
+  def pubsubChannels[A](pattern:String = ""): Option[List[Option[A]]] = {
+    send(s"PUBSUB CHANNELS $pattern*")(asList[A])
+  }
+
 }
