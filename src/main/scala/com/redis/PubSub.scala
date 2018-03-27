@@ -18,6 +18,7 @@ case class M(origChannel: String, message: String) extends PubSubMessage
 case class E(e: java.lang.Throwable) extends PubSubMessage
 
 import Util._
+import com.redis.serialization.{Format, Parse}
 trait PubSub extends PubOperations { self: Redis =>
   var pubSub: Boolean = _
 
@@ -111,7 +112,7 @@ trait PubOperations { self: Redis =>
     send("PUBLISH", List(channel, msg))(asLong)
   }
 
-  def pubsubChannels[A](pattern:String = ""): Option[List[Option[A]]] = {
+  def pubsubChannels[A](pattern:String = "")(implicit format: Format, parse: Parse[A]): Option[List[Option[A]]] = {
     send(s"PUBSUB CHANNELS $pattern*")(asList[A])
   }
 
